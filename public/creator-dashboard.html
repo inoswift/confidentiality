@@ -1,0 +1,175 @@
+<p>&lt;!DOCTYPE html&gt;<br>
+  &lt;html lang=&quot;en&quot;&gt;<br>
+  &lt;head&gt;<br>
+  &lt;meta charset=&quot;UTF-8&quot;&gt;<br>
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;<br>
+  &lt;title&gt;FolderPal - Creator Dashboard&lt;/title&gt;<br>
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;./styles/output.css&quot;&gt;<br>
+  &lt;/head&gt;<br>
+  &lt;body class=&quot;bg-gray-100 h-screen flex flex-col items-center&quot;&gt;<br>
+  &lt;div class=&quot;container mx-auto p-8 bg-white rounded-lg shadow-lg max-w-4xl&quot;&gt;<br>
+  &lt;h1 class=&quot;text-3xl font-semibold mb-6&quot;&gt;Creator Dashboard&lt;/h1&gt;</p>
+<p> &lt;!-- Google Drive Integration --&gt;<br>
+  &lt;div class=&quot;w-full bg-blue-50 p-6 rounded-lg shadow-lg mb-6&quot;&gt;<br>
+  &lt;h2 class=&quot;text-2xl mb-4&quot;&gt;Google Drive Files&lt;/h2&gt;<br>
+  &lt;button id=&quot;connectGoogleDrive&quot; class=&quot;bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mb-4&quot;&gt;Connect Google Drive&lt;/button&gt;<br>
+  &lt;ul id=&quot;googleDriveFiles&quot; class=&quot;list-disc pl-4&quot;&gt;&lt;/ul&gt;<br>
+  &lt;/div&gt;</p>
+<p> &lt;!-- Dropbox Integration --&gt;<br>
+  &lt;div class=&quot;w-full bg-gray-50 p-6 rounded-lg shadow-lg mb-6&quot;&gt;<br>
+  &lt;h2 class=&quot;text-2xl mb-4&quot;&gt;Dropbox Files&lt;/h2&gt;<br>
+  &lt;button id=&quot;connectDropbox&quot; class=&quot;bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mb-4&quot;&gt;Connect Dropbox&lt;/button&gt;<br>
+  &lt;ul id=&quot;dropboxFiles&quot; class=&quot;list-disc pl-4&quot;&gt;&lt;/ul&gt;<br>
+  &lt;/div&gt;</p>
+<p> &lt;!-- Assign Files for Sale --&gt;<br>
+  &lt;div id=&quot;fileUpload&quot; class=&quot;flex flex-col items-center space-y-4 w-full&quot;&gt;<br>
+  &lt;input type=&quot;file&quot; id=&quot;fileInput&quot; class=&quot;w-full px-4 py-2 border border-gray-300 rounded-lg&quot;&gt;<br>
+  <br>
+  &lt;!-- Sale options for individual or bundle --&gt;<br>
+  &lt;div class=&quot;w-full mt-4&quot;&gt;<br>
+  &lt;label class=&quot;block mb-2&quot;&gt;Sale Type:&lt;/label&gt;<br>
+  &lt;select id=&quot;saleType&quot; class=&quot;w-full px-4 py-2 border border-gray-300 rounded-lg&quot;&gt;<br>
+  &lt;option value=&quot;individual&quot;&gt;Individual Item&lt;/option&gt;<br>
+  &lt;option value=&quot;bundle&quot;&gt;Bundle&lt;/option&gt;<br>
+  &lt;/select&gt;<br>
+  &lt;/div&gt;<br>
+  <br>
+  &lt;!-- Bundle input section --&gt;<br>
+  &lt;div id=&quot;bundleSection&quot; class=&quot;w-full mt-4 hidden&quot;&gt;<br>
+  &lt;input type=&quot;text&quot; id=&quot;bundleName&quot; class=&quot;w-full px-4 py-2 border border-gray-300 rounded-lg mb-4&quot; placeholder=&quot;Bundle Name&quot;&gt;<br>
+  &lt;textarea id=&quot;bundleDescription&quot; class=&quot;w-full px-4 py-2 border border-gray-300 rounded-lg&quot; placeholder=&quot;Bundle Description&quot;&gt;&lt;/textarea&gt;<br>
+  &lt;/div&gt;</p>
+<p> &lt;button id=&quot;uploadBtn&quot; class=&quot;bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600&quot;&gt;Assign File for Sale&lt;/button&gt;<br>
+  &lt;/div&gt;</p>
+<p> &lt;!-- Existing Bundles Section --&gt;<br>
+  &lt;div id=&quot;existingBundles&quot; class=&quot;mt-6 bg-white p-4 rounded-lg shadow-lg w-full&quot;&gt;<br>
+  &lt;h3 class=&quot;text-xl font-semibold mb-4&quot;&gt;Existing Bundles&lt;/h3&gt;<br>
+  &lt;ul id=&quot;bundleList&quot; class=&quot;list-disc pl-4&quot;&gt;<br>
+  &lt;!-- Existing bundles will be listed here with delete options --&gt;<br>
+  &lt;/ul&gt;<br>
+  &lt;/div&gt;</p>
+<p> &lt;!-- List of Assigned Files --&gt;<br>
+  &lt;div id=&quot;fileList&quot; class=&quot;mt-6 bg-white p-4 rounded-lg shadow-lg w-full&quot;&gt;<br>
+  &lt;h3 class=&quot;text-xl font-semibold mb-4&quot;&gt;Files Assigned for Sale&lt;/h3&gt;<br>
+  &lt;ul id=&quot;assignedFileList&quot; class=&quot;list-disc pl-4&quot;&gt;<br>
+  &lt;!-- Content creator's files that are assigned for sale will be listed here --&gt;<br>
+  &lt;/ul&gt;<br>
+  &lt;/div&gt;<br>
+  &lt;/div&gt;</p>
+<p> &lt;script&gt;<br>
+  // Toggle bundle section visibility based on sale type<br>
+  document.getElementById('saleType').addEventListener('change', function() {<br>
+  const bundleSection = document.getElementById('bundleSection');<br>
+  if (this.value === 'bundle') {<br>
+  bundleSection.classList.remove('hidden');<br>
+  } else {<br>
+  bundleSection.classList.add('hidden');<br>
+  }<br>
+  });</p>
+<p> // Connect to Google Drive<br>
+  document.getElementById('connectGoogleDrive').addEventListener('click', async () =&gt; {<br>
+  const response = await fetch('/api/googledrive/connect');<br>
+  const data = await response.json();<br>
+  window.location.href = data.authUrl;<br>
+  });</p>
+<p> // Connect to Dropbox<br>
+  document.getElementById('connectDropbox').addEventListener('click', async () =&gt; {<br>
+  const response = await fetch('/api/dropbox/connect');<br>
+  const data = await response.json();<br>
+  window.location.href = data.authUrl;<br>
+  });</p>
+<p> // Fetch and display Google Drive files<br>
+  async function fetchGoogleDriveFiles() {<br>
+  const response = await fetch('/api/googledrive/list');<br>
+  const files = await response.json();<br>
+  const fileList = document.getElementById('googleDriveFiles');<br>
+  fileList.innerHTML = ''; // Clear list</p>
+<p> files.forEach(file =&gt; {<br>
+  const fileItem = document.createElement('li');<br>
+  fileItem.textContent = file.name;<br>
+  fileList.appendChild(fileItem);<br>
+  });<br>
+  }</p>
+<p> // Fetch and display Dropbox files<br>
+  async function fetchDropboxFiles() {<br>
+  const response = await fetch('/api/dropbox/list');<br>
+  const files = await response.json();<br>
+  const fileList = document.getElementById('dropboxFiles');<br>
+  fileList.innerHTML = ''; // Clear list</p>
+<p> files.forEach(file =&gt; {<br>
+  const fileItem = document.createElement('li');<br>
+  fileItem.textContent = file.name;<br>
+  fileList.appendChild(fileItem);<br>
+  });<br>
+  }</p>
+<p> // Assign file or bundle for sale<br>
+  document.getElementById('uploadBtn').addEventListener('click', async function() {<br>
+  const fileInput = document.getElementById('fileInput').files[0];<br>
+  const saleType = document.getElementById('saleType').value;<br>
+  const formData = new FormData();<br>
+  formData.append('file', fileInput);<br>
+  formData.append('saleType', saleType);</p>
+<p> if (saleType === 'bundle') {<br>
+  const bundleName = document.getElementById('bundleName').value;<br>
+  const bundleDescription = document.getElementById('bundleDescription').value;<br>
+  formData.append('bundleName', bundleName);<br>
+  formData.append('bundleDescription', bundleDescription);<br>
+  }</p>
+<p> try {<br>
+  const response = await fetch('/api/creator/assign', {<br>
+  method: 'POST',<br>
+  body: formData,<br>
+  headers: {<br>
+  'Authorization': `Bearer ${localStorage.getItem('accessToken')}`<br>
+  }<br>
+  });<br>
+  const data = await response.json();<br>
+  alert(data.message);<br>
+  } catch (error) {<br>
+  alert('Error assigning file for sale');<br>
+  }<br>
+  });</p>
+<p> // Fetch and display existing bundles<br>
+  async function fetchBundles() {<br>
+  const response = await fetch('/api/creator/bundles', {<br>
+  headers: {<br>
+  'Authorization': `Bearer ${localStorage.getItem('accessToken')}`<br>
+  }<br>
+  });<br>
+  const bundles = await response.json();<br>
+  const bundleList = document.getElementById('bundleList');<br>
+  bundleList.innerHTML = ''; // Clear list</p>
+<p> bundles.forEach(bundle =&gt; {<br>
+  const bundleItem = document.createElement('li');<br>
+  bundleItem.textContent = `${bundle.name} - ${bundle.description}`;<br>
+  <br>
+  // Add delete button for each bundle<br>
+  const deleteBtn = document.createElement('button');<br>
+  deleteBtn.textContent = 'Delete';<br>
+  deleteBtn.classList.add('bg-red-500', 'text-white', 'px-2', 'py-1', 'ml-4', 'rounded-lg', 'hover:bg-red-600');<br>
+  deleteBtn.addEventListener('click', async () =&gt; {<br>
+  await deleteBundle(bundle.id);<br>
+  fetchBundles(); // Refresh bundle list<br>
+  });<br>
+  <br>
+  bundleItem.appendChild(deleteBtn);<br>
+  bundleList.appendChild(bundleItem);<br>
+  });<br>
+  }</p>
+<p> // Delete a bundle<br>
+  async function deleteBundle(bundleId) {<br>
+  await fetch(`/api/creator/bundles/${bundleId}`, {<br>
+  method: 'DELETE',<br>
+  headers: {<br>
+  'Authorization': `Bearer ${localStorage.getItem('accessToken')}`<br>
+  }<br>
+  });<br>
+  }</p>
+<p> document.addEventListener('DOMContentLoaded', () =&gt; {<br>
+  fetchGoogleDriveFiles();<br>
+  fetchDropboxFiles();<br>
+  fetchBundles(); // Fetch existing bundles<br>
+  });<br>
+  &lt;/script&gt;<br>
+  &lt;/body&gt;<br>
+  &lt;/html&gt;</p>

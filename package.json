@@ -1,0 +1,35 @@
+{
+  "name": "folderpal",
+  "version": "1.0.0",
+  "description": "A platform for creators to sell or subscribe files through Google Drive, Dropbox, and Stripe integration.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "build:css": "postcss src/styles/tailwind.css -o public/styles/output.css",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.17.1",           // Express framework for Node.js server
+    "dotenv": "^10.0.0",            // Load environment variables
+    "stripe": "^8.0.0",             // Stripe API for payments
+    "pg": "^8.6.0",                 // PostgreSQL client for database interaction
+    "jsonwebtoken": "^8.5.1",       // JWT for authentication
+    "bcryptjs": "^2.4.3",           // For password hashing and validation
+    "googleapis": "^39.2.0",        // Google Drive API integration
+    "dropbox": "^4.0.30",           // Dropbox API integration
+    "node-fetch": "^2.6.1",         // Fetch API for server-side requests
+    "cors": "^2.8.5",               // Middleware to handle CORS in your API
+    "winston": "^3.3.3",            // Logging utility
+    "nodemailer": "^6.6.3"          // For sending email notifications
+  },
+  "devDependencies": {
+    "tailwindcss": "^2.2.19",       // Tailwind CSS for styling
+    "autoprefixer": "^10.4.0",      // Autoprefixer for cross-browser CSS compatibility
+    "postcss": "^8.3.0",            // PostCSS to process CSS
+    "jest": "^27.0.6",              // Jest for testing your backend logic
+    "nodemon": "^2.0.7"             // Automatically restarts server during development
+  },
+  "author": "Your Name",
+  "license": "ISC"
+}
